@@ -73,25 +73,42 @@ def extract_audio_segment(
     target_sr: int = TARGET_SR,
 ) -> np.ndarray:
     """
-    Load *audio_path*, extract the segment [start_sec, end_sec], resample to
-    *target_sr*, and return a float32 numpy array.
+    Load *audio_path*, extract the segment [start_sec, end_sec] using soundfile
+    (avoids torchcodec DLL issues on Windows), and return a float32 numpy array.
     """
-    waveform, sr = torchaudio.load(audio_path)
+    import soundfile as sf
 
-    # Resample
-    if sr != target_sr:
-        resampler = torchaudio.transforms.Resample(orig_freq=sr, new_freq=target_sr)
-        waveform = resampler(waveform)
-        sr = target_sr
-
-    # Mono
-    if waveform.shape[0] > 1:
-        waveform = waveform.mean(dim=0, keepdim=True)
+    info = sf.info(audio_path)
+    sr = info.samplerate
+    total_frames = info.frames
 
     start_frame = int(start_sec * sr)
-    end_frame = int(end_sec * sr)
-    segment = waveform[0, start_frame:end_frame].numpy().astype(np.float32)
-    return segment
+    end_frame = min(int(end_sec * sr), total_frames)
+    n_frames = end_frame - start_frame
+
+    if n_frames <= 0:
+        return np.array([], dtype=np.float32)
+
+    audio_data, _ = sf.read(
+        audio_path,
+        start=start_frame,
+        frames=n_frames,
+        dtype="float32",
+        always_2d=True,
+    )
+
+    # Mono
+    if audio_data.shape[1] > 1:
+        mono = audio_data.mean(axis=1)
+    else:
+        mono = audio_data[:, 0]
+
+    # Resample if necessary
+    if sr != target_sr:
+        import librosa
+        mono = librosa.resample(mono, orig_sr=sr, target_sr=target_sr)
+
+    return mono.astype(np.float32)
 
 
 def transcribe_segment(

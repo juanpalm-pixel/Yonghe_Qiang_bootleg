@@ -48,26 +48,40 @@ def load_audio_segment(
     target_sr: int = 16000,
 ) -> Tuple[torch.Tensor, int]:
     """
-    Load a segment of audio from *audio_path* between *start_sec* and *end_sec*.
-    Resamples to *target_sr* if necessary.
-
-    Returns (waveform_1d, sample_rate).
+    Load a segment of audio from *audio_path* using soundfile (avoids torchcodec
+    DLL issues on Windows). Returns (waveform_2d [1, T], sample_rate).
     """
-    waveform, sr = torchaudio.load(audio_path)
+    import soundfile as sf
+    import numpy as np
+
+    # soundfile can read WAV files directly without FFmpeg
+    info = sf.info(audio_path)
+    sr = info.samplerate
+    total_frames = info.frames
+
+    start_frame = int(start_sec * sr)
+    end_frame = min(int(end_sec * sr), total_frames)
+    n_frames = end_frame - start_frame
+
+    audio_data, _ = sf.read(
+        audio_path,
+        start=start_frame,
+        frames=n_frames,
+        dtype="float32",
+        always_2d=True,
+    )
+    # audio_data shape: (frames, channels) → convert to (1, frames) torch.Tensor
+    if audio_data.shape[1] > 1:
+        mono = audio_data.mean(axis=1)
+    else:
+        mono = audio_data[:, 0]
+
+    waveform = torch.from_numpy(mono).unsqueeze(0)  # (1, T)
 
     if sr != target_sr:
         resampler = torchaudio.transforms.Resample(orig_freq=sr, new_freq=target_sr)
         waveform = resampler(waveform)
         sr = target_sr
-
-    # Convert to mono
-    if waveform.shape[0] > 1:
-        waveform = waveform.mean(dim=0, keepdim=True)
-
-    # Trim to requested segment
-    start_frame = int(start_sec * sr)
-    end_frame = int(end_sec * sr)
-    waveform = waveform[:, start_frame:end_frame]
 
     return waveform, sr
 
@@ -108,27 +122,22 @@ def run_diarization(
     logger.info("Loading pyannote/speaker-diarization-3.1 …")
     pipeline = Pipeline.from_pretrained(
         "pyannote/speaker-diarization-3.1",
-        use_auth_token=hf_token,
+        token=hf_token,
     )
     pipeline = pipeline.to(torch.device(device))
 
-    # Load and save a temporary 300-s segment for pyannote
+    # Load audio segment as tensor
     waveform, sr = load_audio_segment(audio_path, start_sec, end_sec)
-    tmp_dir = Path(audio_path).parent
-    tmp_path = tmp_dir / "_tmp_segment.wav"
-    torchaudio.save(str(tmp_path), waveform, sr)
 
     logger.info("Running diarization (this may take several minutes on CPU) …")
+    # Pass audio as a pre-loaded dict to bypass torchcodec (which requires FFmpeg DLLs)
+    audio_input = {"waveform": waveform, "sample_rate": sr}
     diarization = pipeline(
-        str(tmp_path),
+        audio_input,
         num_speakers=num_speakers,
     )
 
-    # Clean up temporary file
-    try:
-        tmp_path.unlink()
-    except Exception:
-        pass
+    # No temp file needed
 
     # Parse diarization result into list of segment dicts
     segments = []

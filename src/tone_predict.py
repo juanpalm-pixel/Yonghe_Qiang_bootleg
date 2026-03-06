@@ -240,19 +240,23 @@ def stage3_add_tones(
     dict
         {tier_name: [(start, end, ipa_with_tones), ...]}
     """
-    import torchaudio
+    import soundfile as sf
 
     logger.info("=== Stage 3: Tone Prediction ===")
 
-    # Load full waveform once
-    waveform, sr = torchaudio.load(audio_path)
-    if waveform.shape[0] > 1:
-        waveform = waveform.mean(dim=0, keepdim=True)
+    # Load full waveform using soundfile (avoids torchcodec DLL issues on Windows)
+    audio_np, sr = sf.read(audio_path, dtype="float32", always_2d=True)
+    # Convert to mono
+    if audio_np.shape[1] > 1:
+        audio_np = audio_np.mean(axis=1)
+    else:
+        audio_np = audio_np[:, 0]
+
+    # Resample to 16 kHz if needed
     if sr != TARGET_SR:
-        import torchaudio.functional as F
-        waveform = torchaudio.functional.resample(waveform, sr, TARGET_SR)
+        import librosa
+        audio_np = librosa.resample(audio_np, orig_sr=sr, target_sr=TARGET_SR)
         sr = TARGET_SR
-    audio_np = waveform[0].numpy()
 
     result: Dict[str, List[Tuple[float, float, str]]] = {}
 

@@ -278,6 +278,7 @@ def main():
     # -----------------------------------------------------------------------
     step2_path = trial_dir / "step2_ipa_no_tones.TextGrid"
 
+    step2_tg = None
     try:
         from transcribe_ipa import stage2_transcribe
         tier_data_s2 = stage2_transcribe(audio_path, tier_data_s1, hf_token)
@@ -291,21 +292,24 @@ def main():
         tier_data_s2 = tier_data_s1  # fall through with empty text
 
     # Evaluate Stage 2
-    try:
-        from evaluate import compare_textgrids
-
-        s2_stats = compare_textgrids(step2_tg, ref_no_tones_tg, strip_tones=False)
-        report["stage2"] = s2_stats
-        logger.info("Stage 2 overall CER: %.2f%%", s2_stats["overall_cer"] * 100)
-    except Exception as exc:
-        logger.error("Stage 2 evaluation failed: %s", exc)
-        errors.append(f"Stage 2 eval FAILED: {exc}")
+    if step2_tg is not None:
+        try:
+            from evaluate import compare_textgrids
+            s2_stats = compare_textgrids(step2_tg, ref_no_tones_tg, strip_tones=False)
+            report["stage2"] = s2_stats
+            logger.info("Stage 2 overall CER: %.2f%%", s2_stats["overall_cer"] * 100)
+        except Exception as exc:
+            logger.error("Stage 2 evaluation failed: %s", exc)
+            errors.append(f"Stage 2 eval FAILED: {exc}")
+    else:
+        errors.append("Stage 2 evaluation skipped — stage failed.")
 
     # -----------------------------------------------------------------------
     # Stage 3: Tone prediction
     # -----------------------------------------------------------------------
     step3_path = trial_dir / "step3_ipa_with_tones.TextGrid"
 
+    step3_tg = None
     try:
         from tone_predict import stage3_add_tones
         tier_data_s3 = stage3_add_tones(audio_path, tier_data_s2)
@@ -318,13 +322,16 @@ def main():
         errors.append(f"Stage 3 FAILED: {exc}")
 
     # Evaluate Stage 3
-    try:
-        s3_stats = compare_textgrids(step3_tg, ref_tones_tg, strip_tones=False)
-        report["stage3"] = s3_stats
-        logger.info("Stage 3 overall CER: %.2f%%", s3_stats["overall_cer"] * 100)
-    except Exception as exc:
-        logger.error("Stage 3 evaluation failed: %s", exc)
-        errors.append(f"Stage 3 eval FAILED: {exc}")
+    if step3_tg is not None:
+        try:
+            s3_stats = compare_textgrids(step3_tg, ref_tones_tg, strip_tones=False)
+            report["stage3"] = s3_stats
+            logger.info("Stage 3 overall CER: %.2f%%", s3_stats["overall_cer"] * 100)
+        except Exception as exc:
+            logger.error("Stage 3 evaluation failed: %s", exc)
+            errors.append(f"Stage 3 eval FAILED: {exc}")
+    else:
+        errors.append("Stage 3 evaluation skipped — stage failed.")
 
     # -----------------------------------------------------------------------
     # Save CER report
