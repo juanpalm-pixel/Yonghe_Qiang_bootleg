@@ -221,3 +221,32 @@ Stage1 coverage=?% boundary_mae=?s | Stage2 CER=100.00% | Stage3 CER=100.00%
 
 ### Errors / Issues
 - Stage 1 FAILED: An error happened while trying to locate the file on the Hub and we cannot find the requested files in the local cache. Please check your connection and try again or make sure your Internet connection is on.
+
+---
+## [trial_3] 2026-03-06 12:20
+
+### Summary
+```
+Stage1 coverage=?% boundary_mae=?s | Stage2 CER=388.73% | Stage3 CER=263.08%
+```
+
+### Stage 1 — Diarization
+- Speech coverage: ? %
+- Boundary MAE: ? s
+- Hypothesis segments: ?
+- Reference segments: ?
+
+### Stage 2 — IPA (no tones)
+- Overall CER: 388.73%
+  - Tier A: CER=280.68%  ref=1030 chars  hyp=3285 chars
+  - Tier B: CER=273.15%  ref=1084 chars  hyp=3373 chars
+  - Tier C: CER=2878.95%  ref=95 chars  hyp=2804 chars
+
+### Stage 3 — IPA with tones
+- Overall CER: 263.08%
+  - Tier A: CER=183.19%  ref=1838 chars  hyp=4229 chars
+  - Tier B: CER=177.70%  ref=1960 chars  hyp=4331 chars
+  - Tier C: CER=2144.31%  ref=167 chars  hyp=3710 chars
+
+### Errors / Issues
+- Stage 1 FAILED: An error happened while trying to locate the file on the Hub and we cannot find the requested files in the local cache. Please check your connection and try again or make sure your Internet connection is on.
