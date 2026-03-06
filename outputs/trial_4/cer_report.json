@@ -1,0 +1,82 @@
+{
+  "stage1": {
+    "note": "diarization skipped or failed",
+    "ser": 0.0,
+    "ster": 0.0,
+    "total_ref_segments": 193,
+    "total_added_segments": 0,
+    "total_deleted_segments": 0,
+    "total_added_secs": 0.0,
+    "total_deleted_secs": 0.0,
+    "per_tier": {
+      "A": {
+        "n_ref": 81,
+        "n_hyp": 81,
+        "added_segs": 0,
+        "deleted_segs": 0,
+        "added_secs": 0.0,
+        "deleted_secs": 0.0
+      },
+      "B": {
+        "n_ref": 108,
+        "n_hyp": 108,
+        "added_segs": 0,
+        "deleted_segs": 0,
+        "added_secs": 0.0,
+        "deleted_secs": 0.0
+      },
+      "C": {
+        "n_ref": 4,
+        "n_hyp": 4,
+        "added_segs": 0,
+        "deleted_segs": 0,
+        "added_secs": 0.0,
+        "deleted_secs": 0.0
+      }
+    }
+  },
+  "stage2": {
+    "per_tier": {
+      "A": {
+        "cer": 1.2282,
+        "ref_chars": 1030,
+        "hyp_chars": 1503
+      },
+      "B": {
+        "cer": 1.3644,
+        "ref_chars": 1084,
+        "hyp_chars": 1777
+      },
+      "C": {
+        "cer": 0.9895,
+        "ref_chars": 95,
+        "hyp_chars": 3
+      }
+    },
+    "overall_cer": 1.2847,
+    "ref_total_chars": 2209,
+    "hyp_total_chars": 3283
+  },
+  "stage3": {
+    "per_tier": {
+      "A": {
+        "cer": 0.8634,
+        "ref_chars": 1838,
+        "hyp_chars": 1907
+      },
+      "B": {
+        "cer": 0.9372,
+        "ref_chars": 1960,
+        "hyp_chars": 2249
+      },
+      "C": {
+        "cer": 0.982,
+        "ref_chars": 167,
+        "hyp_chars": 5
+      }
+    },
+    "overall_cer": 0.9049,
+    "ref_total_chars": 3965,
+    "hyp_total_chars": 4161
+  }
+}

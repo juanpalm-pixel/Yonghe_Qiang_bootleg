@@ -180,17 +180,31 @@ def stage2_transcribe(
 
     for tier_name, intervals in tier_data.items():
         new_intervals = []
-        for start, end, _ in intervals:
+        for start, end, text in intervals:
             duration = end - start
-            # Skip very short or silent intervals
+
+            # Only transcribe intervals marked as speech by Stage 1 diarization.
+            # Silence gaps (text == "") are left blank to avoid hallucination.
+            if text != "<SPEECH>":
+                new_intervals.append((start, end, ""))
+                continue
+
+            # Skip very short intervals
             if duration < 0.1:
                 new_intervals.append((start, end, ""))
                 continue
 
             audio = extract_audio_segment(audio_path, start, end)
 
-            # Skip if too short (< 0.1 s after extraction)
+            # Skip if too short after extraction
             if len(audio) < int(0.1 * TARGET_SR):
+                new_intervals.append((start, end, ""))
+                continue
+
+            # Energy-based VAD: skip if RMS is below silence threshold
+            rms = float(np.sqrt(np.mean(audio ** 2)))
+            if rms < 0.005:
+                logger.debug("[%s] %.2f–%.2f  RMS=%.5f → silence, skipping", tier_name, start, end, rms)
                 new_intervals.append((start, end, ""))
                 continue
 
@@ -198,8 +212,8 @@ def stage2_transcribe(
             ipa_text = burmese_output_to_ipa(burmese_text)
 
             logger.debug(
-                "[%s] %.2f–%.2f  Burmese=%r  IPA=%r",
-                tier_name, start, end, burmese_text, ipa_text,
+                "[%s] %.2f–%.2f  RMS=%.4f  Burmese=%r  IPA=%r",
+                tier_name, start, end, rms, burmese_text, ipa_text,
             )
             new_intervals.append((start, end, ipa_text))
 

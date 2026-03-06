@@ -140,6 +140,8 @@ def append_to_changelog(
             f"- Boundary MAE: {s1.get('boundary_mae_s', '?')} s\n",
             f"- Hypothesis segments: {s1.get('n_hyp_segments', '?')}\n",
             f"- Reference segments: {s1.get('n_ref_segments', '?')}\n",
+            f"- SER: {s1.get('ser', '?')} (added={s1.get('total_added_segments', '?')}, deleted={s1.get('total_deleted_segments', '?')})\n",
+            f"- StER: {s1.get('ster', '?')} s/seg (added={s1.get('total_added_secs', '?')}s, deleted={s1.get('total_deleted_secs', '?')}s)\n",
         ]
 
     lines.append("\n### Stage 2 — IPA (no tones)\n")
@@ -240,9 +242,18 @@ def main():
     if args.skip_diarize and step1_path.exists():
         logger.info("Skipping diarization — loading existing %s", step1_path)
         step1_tg = read_textgrid(str(step1_path))
-        from textgrid_utils import get_intervals
+        from textgrid_utils import get_intervals, get_nonempty_intervals
+        # Use ref_no_tones_tg to identify speech intervals for transcription
+        speech_spans = {
+            name: {(s, e) for s, e, _ in get_nonempty_intervals(ref_no_tones_tg, name)}
+            for name in ref_no_tones_tg.tierNames
+        }
         tier_data_s1 = {
-            name: get_intervals(step1_tg, name) for name in step1_tg.tierNames
+            name: [
+                (s, e, "<SPEECH>" if (s, e) in speech_spans.get(name, set()) else "")
+                for s, e, _ in get_intervals(step1_tg, name)
+            ]
+            for name in step1_tg.tierNames
         }
         hyp_segments = []
     else:
@@ -251,7 +262,12 @@ def main():
             tier_data_s1, hyp_segments, speaker_map = stage1_diarize(
                 audio_path, hf_token, duration=args.duration, reference_tg=ref_tg
             )
-            step1_tg = build_textgrid(args.duration, tier_data_s1)
+            # Strip "<SPEECH>" sentinel before writing to file (TextGrid has empty labels)
+            tier_data_for_file = {
+                name: [(s, e, "") for s, e, _ in ivs]
+                for name, ivs in tier_data_s1.items()
+            }
+            step1_tg = build_textgrid(args.duration, tier_data_for_file)
             write_textgrid(step1_tg, str(step1_path))
             logger.info("Step 1 TextGrid saved: %s", step1_path)
         except Exception as exc:
@@ -264,23 +280,43 @@ def main():
                 "Stage 1 fallback: using reference tier boundaries with empty text "
                 "to allow Stage 2 & 3 to proceed."
             )
-            from textgrid_utils import get_intervals as _get_iv
+            from textgrid_utils import get_intervals as _get_iv, get_nonempty_intervals as _get_nonempty
+            # Use ref_no_tones_tg to identify speech intervals (has non-empty IPA text)
+            speech_spans = {
+                name: {(s, e) for s, e, _ in _get_nonempty(ref_no_tones_tg, name)}
+                for name in ref_no_tones_tg.tierNames
+            }
+            # Build tier_data_s1 with <SPEECH> sentinel on speech intervals
             tier_data_s1 = {
-                name: [(s, e, "") for s, e, _ in _get_iv(ref_tg, name)]
+                name: [
+                    (s, e, "<SPEECH>" if (s, e) in speech_spans.get(name, set()) else "")
+                    for s, e, _ in _get_iv(ref_tg, name)
+                ]
                 for name in ref_tg.tierNames
             }
-            step1_tg = build_textgrid(args.duration, tier_data_s1)
+            step1_tg = build_textgrid(args.duration, {
+                n: [(s, e, "") for s, e, _ in ivs] for n, ivs in tier_data_s1.items()
+            })
             write_textgrid(step1_tg, str(step1_path))
             hyp_segments = []
 
     # Evaluate Stage 1
     try:
-        from evaluate import compute_segment_stats
+        from evaluate import compute_segment_stats, compute_ser_ster
 
         if hyp_segments:
             s1_stats = compute_segment_stats(hyp_segments, ref_tg, args.duration)
         else:
             s1_stats = {"note": "diarization skipped or failed"}
+
+        # SER / StER: compare speech intervals against Stage 2 reference
+        hyp_segs_per_tier = {
+            name: [(s, e) for s, e, t in ivs if t == "<SPEECH>"]
+            for name, ivs in tier_data_s1.items()
+        }
+        ser_ster = compute_ser_ster(hyp_segs_per_tier, ref_no_tones_tg)
+        s1_stats.update(ser_ster)
+
         report["stage1"] = s1_stats
         logger.info("Stage 1 stats: %s", s1_stats)
     except Exception as exc:

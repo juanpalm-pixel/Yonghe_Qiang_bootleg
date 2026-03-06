@@ -248,8 +248,8 @@ def build_empty_textgrid_from_segments(
         cursor = 0.0
         for start, end in raw:
             if start > cursor + 1e-6:
-                intervals.append((cursor, start, ""))  # silence gap
-            intervals.append((start, end, ""))          # speech region (empty text)
+                intervals.append((cursor, start, ""))         # silence gap (will NOT be transcribed)
+            intervals.append((start, end, "<SPEECH>"))        # speech region (will be transcribed)
             cursor = end
         if cursor < duration - 1e-6:
             intervals.append((cursor, duration, ""))
