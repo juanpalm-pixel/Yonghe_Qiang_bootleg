@@ -47,6 +47,20 @@ All significant changes, trial runs, errors, decisions, and CER results are docu
 
 <!-- Trial entries will be appended here automatically by run_pipeline.py -->
 
+### Action Required Before Running Stage 1
+To enable the pyannote diarization model, you must:
+1. Accept the model terms at: https://huggingface.co/pyannote/speaker-diarization-3.1
+2. Accept segmentation model terms at: https://huggingface.co/pyannote/segmentation-3.0
+3. In HuggingFace settings, enable "Access to public gated repositories" for your fine-grained token.
+
+### Action Required for GitHub Push
+1. Create the repository: https://github.com/new → name: `Yonghe_Qiang_bootleg`
+2. In the repo directory run:
+   ```
+   git remote add origin https://github.com/juanpalm-pixel/Yonghe_Qiang_bootleg.git
+   git push -u origin main
+   ```
+
 ---
 ## [trial_1] 2026-03-06 11:27
 
