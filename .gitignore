@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# HuggingFace cache (large model weights - do not commit)
+.cache/
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# Audio working files
+_tmp_segment.wav
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp

@@ -46,3 +46,135 @@ All significant changes, trial runs, errors, decisions, and CER results are docu
 ---
 
 <!-- Trial entries will be appended here automatically by run_pipeline.py -->
+
+---
+## [trial_1] 2026-03-06 11:27
+
+### Summary
+```
+Stage1 coverage=?% boundary_mae=?s | Stage2 CER=100.00%
+```
+
+### Stage 1 — Diarization
+- Speech coverage: ? %
+- Boundary MAE: ? s
+- Hypothesis segments: ?
+- Reference segments: ?
+
+### Stage 2 — IPA (no tones)
+- Overall CER: 100.00%
+  - Tier A: CER=100.00%  ref=1030 chars  hyp=0 chars
+  - Tier B: CER=100.00%  ref=1084 chars  hyp=0 chars
+  - Tier C: CER=100.00%  ref=95 chars  hyp=0 chars
+
+### Stage 3 — IPA with tones
+
+### Errors / Issues
+- Stage 1 FAILED: Pipeline.from_pretrained() got an unexpected keyword argument 'use_auth_token'
+- Stage 3 FAILED: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.10.0+cpu) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1442, in load_library
+    ctypes.CDLL(path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\ctypes\__init__.py", line 376, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: Could not find module 'C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core8.dll' (or one of its dependencies). Try using the full path with constructor syntax.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\_core\ops.py", line 57, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1444, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core8.dll
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1442, in load_library
+    ctypes.CDLL(path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\ctypes\__init__.py", line 376, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: Could not find module 'C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core7.dll' (or one of its dependencies). Try using the full path with constructor syntax.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\_core\ops.py", line 57, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1444, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core7.dll
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1442, in load_library
+    ctypes.CDLL(path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\ctypes\__init__.py", line 376, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: Could not find module 'C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core6.dll' (or one of its dependencies). Try using the full path with constructor syntax.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\_core\ops.py", line 57, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1444, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core6.dll
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1442, in load_library
+    ctypes.CDLL(path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\ctypes\__init__.py", line 376, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: Could not find module 'C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core5.dll' (or one of its dependencies). Try using the full path with constructor syntax.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\_core\ops.py", line 57, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1444, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core5.dll
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1442, in load_library
+    ctypes.CDLL(path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\ctypes\__init__.py", line 376, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: Could not find module 'C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core4.dll' (or one of its dependencies). Try using the full path with constructor syntax.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\_core\ops.py", line 57, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torch\_ops.py", line 1444, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core4.dll
+[end of libtorchcodec loading traceback].
+- Stage 3 eval FAILED: cannot access local variable 'step3_tg' where it is not associated with a value

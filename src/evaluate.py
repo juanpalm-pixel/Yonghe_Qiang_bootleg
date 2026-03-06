@@ -27,6 +27,8 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import numpy as np
+
 logger = logging.getLogger(__name__)
 
 
@@ -177,8 +179,6 @@ def compute_segment_stats(
     n_frames = int(duration / resolution)
     ref_mask = np.zeros(n_frames, dtype=bool)
     hyp_mask = np.zeros(n_frames, dtype=bool)
-
-    import numpy as np
 
     for s, e in ref_speech:
         ref_mask[int(s / resolution) : int(e / resolution)] = True

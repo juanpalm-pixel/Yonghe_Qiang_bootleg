@@ -127,14 +127,7 @@ def transcribe_segment(
 def burmese_output_to_ipa(burmese_text: str) -> str:
     """
     Convert raw Burmese model output → approximate IPA (no tones).
-
-    Imports the mapping table from burmese_ipa_map.py.
     """
-    # Add src to path if called from run_pipeline.py
-    src_dir = Path(__file__).parent
-    if str(src_dir) not in sys.path:
-        sys.path.insert(0, str(src_dir))
-
     from burmese_ipa_map import burmese_to_ipa
     return burmese_to_ipa(burmese_text)
 

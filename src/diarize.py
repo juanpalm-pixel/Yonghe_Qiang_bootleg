@@ -114,8 +114,8 @@ def run_diarization(
 
     # Load and save a temporary 300-s segment for pyannote
     waveform, sr = load_audio_segment(audio_path, start_sec, end_sec)
-    tmp_path = Path(audio_path).with_suffix("") / ".tmp_segment.wav"
-    tmp_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_dir = Path(audio_path).parent
+    tmp_path = tmp_dir / "_tmp_segment.wav"
     torchaudio.save(str(tmp_path), waveform, sr)
 
     logger.info("Running diarization (this may take several minutes on CPU) …")

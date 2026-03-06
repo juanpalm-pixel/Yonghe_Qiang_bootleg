@@ -80,41 +80,56 @@ def classify_tone(f0: np.ndarray) -> str:
 
     Uses voiced frames only (non-NaN).  Falls back to '33' when there
     are insufficient voiced frames.
+
+    Strategy
+    --------
+    We use the *start* F0 (first third of voiced frames) and *end* F0
+    (last third) rather than the overall mean, because tones like 53
+    (high-falling) start high even though their mean may be mid-range.
+
+    ┌──────────────┬──────────────┬──────┐
+    │  start_norm  │ end_start_δ  │ tone │
+    ├──────────────┼──────────────┼──────┤
+    │    ≥ 0.5     │   ≤ -0.1    │  53  │  high-falling
+    │    ≥ 0.5     │   > -0.1    │  55  │  high-level
+    │    < 0.5     │   ≥  0.1    │  35  │  low-rising
+    │    < 0.5     │   < 0.1     │  33  │  mid-level
+    └──────────────┴──────────────┴──────┘
+
+    *start_norm* = start_f0 normalised to [0,1] within the voiced range.
+    *end_start_δ* = (end_f0 − start_f0) / voiced_range  (positive = rising).
     """
     voiced = f0[~np.isnan(f0)]
     if len(voiced) < 3:
         return "33"  # default: mid level
 
-    # Normalise F0 within the voiced region
+    third = max(1, len(voiced) // 3)
+    start_hz = float(voiced[:third].mean())
+    end_hz = float(voiced[-third:].mean())
+
     f0_min, f0_max = voiced.min(), voiced.max()
-    f0_range = f0_max - f0_min if f0_max > f0_min else 1.0
+    f0_range = float(f0_max - f0_min) if f0_max > f0_min else 1.0
 
-    mean_norm = (voiced.mean() - f0_min) / f0_range   # 0 = low, 1 = high
+    # Normalised start height: 0 = lowest, 1 = highest in this segment
+    start_norm = (start_hz - f0_min) / f0_range
 
-    # Slope: fit a linear trend to voiced F0 values
-    x = np.linspace(0, 1, len(voiced))
-    slope = float(np.polyfit(x, voiced, 1)[0])
-    # Normalise slope by mean F0 to get a pitch-relative slope
-    mean_hz = voiced.mean()
-    if mean_hz > 0:
-        slope_norm = slope / mean_hz  # positive = rising, negative = falling
+    # Direction: positive = rising, negative = falling
+    delta = (end_hz - start_hz) / f0_range
+
+    # When the F0 barely varies, the intra-segment normalisation cannot
+    # distinguish 55 (high-level) from 33 (mid-level).
+    # "Flat" = range is less than 20 Hz OR less than 10% of the mean F0.
+    mean_hz = float(voiced.mean())
+    flat_threshold = max(20.0, 0.10 * mean_hz)
+    is_flat = f0_range < flat_threshold
+
+    if is_flat:
+        return "55" if mean_hz > 170.0 else "33"
+
+    if start_norm >= 0.5:
+        return "53" if delta <= -0.1 else "55"
     else:
-        slope_norm = 0.0
-
-    # Decision table
-    # ┌───────────┬──────────────┬──────┐
-    # │ mean_norm │  slope_norm  │ tone │
-    # ├───────────┼──────────────┼──────┤
-    # │  ≥ 0.6    │   ≥ -0.15   │  55  │
-    # │  ≥ 0.6    │   < -0.15   │  53  │
-    # │  < 0.6    │   ≥  0.15   │  35  │
-    # │  < 0.6    │  < 0.15     │  33  │
-    # └───────────┴──────────────┴──────┘
-
-    if mean_norm >= 0.6:
-        return "55" if slope_norm >= -0.15 else "53"
-    else:
-        return "35" if slope_norm >= 0.15 else "33"
+        return "35" if delta >= 0.1 else "33"
 
 
 # ---------------------------------------------------------------------------
