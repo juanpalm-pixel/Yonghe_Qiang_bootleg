@@ -1,0 +1,49 @@
+{
+  "stage1": {
+    "note": "diarization skipped or failed"
+  },
+  "stage2": {
+    "per_tier": {
+      "A": {
+        "cer": 1.0,
+        "ref_chars": 1030,
+        "hyp_chars": 0
+      },
+      "B": {
+        "cer": 1.0,
+        "ref_chars": 1084,
+        "hyp_chars": 0
+      },
+      "C": {
+        "cer": 1.0,
+        "ref_chars": 95,
+        "hyp_chars": 0
+      }
+    },
+    "overall_cer": 1.0,
+    "ref_total_chars": 2209,
+    "hyp_total_chars": 0
+  },
+  "stage3": {
+    "per_tier": {
+      "A": {
+        "cer": 1.0,
+        "ref_chars": 1838,
+        "hyp_chars": 0
+      },
+      "B": {
+        "cer": 1.0,
+        "ref_chars": 1960,
+        "hyp_chars": 0
+      },
+      "C": {
+        "cer": 1.0,
+        "ref_chars": 167,
+        "hyp_chars": 0
+      }
+    },
+    "overall_cer": 1.0,
+    "ref_total_chars": 3965,
+    "hyp_total_chars": 0
+  }
+}

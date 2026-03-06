@@ -1,0 +1,31 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+0
+300
+<exists>
+3
+"IntervalTier"
+"A"
+0
+300
+1
+0
+300
+""
+"IntervalTier"
+"B"
+0
+300
+1
+0
+300
+""
+"IntervalTier"
+"C"
+0
+300
+1
+0
+300
+""

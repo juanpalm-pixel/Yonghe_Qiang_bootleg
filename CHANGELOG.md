@@ -178,3 +178,32 @@ Traceback (most recent call last):
 OSError: Could not load this library: C:\Users\pablo\miniconda3\envs\yonghe_qiang\Lib\site-packages\torchcodec\libtorchcodec_core4.dll
 [end of libtorchcodec loading traceback].
 - Stage 3 eval FAILED: cannot access local variable 'step3_tg' where it is not associated with a value
+
+---
+## [trial_2] 2026-03-06 11:31
+
+### Summary
+```
+Stage1 coverage=?% boundary_mae=?s | Stage2 CER=100.00% | Stage3 CER=100.00%
+```
+
+### Stage 1 — Diarization
+- Speech coverage: ? %
+- Boundary MAE: ? s
+- Hypothesis segments: ?
+- Reference segments: ?
+
+### Stage 2 — IPA (no tones)
+- Overall CER: 100.00%
+  - Tier A: CER=100.00%  ref=1030 chars  hyp=0 chars
+  - Tier B: CER=100.00%  ref=1084 chars  hyp=0 chars
+  - Tier C: CER=100.00%  ref=95 chars  hyp=0 chars
+
+### Stage 3 — IPA with tones
+- Overall CER: 100.00%
+  - Tier A: CER=100.00%  ref=1838 chars  hyp=0 chars
+  - Tier B: CER=100.00%  ref=1960 chars  hyp=0 chars
+  - Tier C: CER=100.00%  ref=167 chars  hyp=0 chars
+
+### Errors / Issues
+- Stage 1 FAILED: An error happened while trying to locate the file on the Hub and we cannot find the requested files in the local cache. Please check your connection and try again or make sure your Internet connection is on.
