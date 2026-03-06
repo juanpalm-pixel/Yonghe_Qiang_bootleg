@@ -315,3 +315,31 @@ Stage1 coverage=?% boundary_mae=?s SER=0.0 StER=0.0s | Stage2 CER=128.47% | Stag
 
 ### Errors / Issues
 - Stage 1 FAILED: 'DiarizeOutput' object has no attribute 'itertracks'
+
+---
+## [trial_stage1_rerun_2] 2026-03-06 14:04
+
+### Summary
+```
+Stage1 coverage=89.75% boundary_mae=0.1288s SER=1.0104 StER=1.1581s | Stage2 CER=118.33% | Stage3 CER=85.88%
+```
+
+### Stage 1 — Diarization
+- Speech coverage: 89.75 %
+- Boundary MAE: 0.1288 s
+- Hypothesis segments: 88
+- Reference segments: 193
+- SER: 1.0104 (added=45, deleted=150)
+- StER: 1.1581 s/seg (added=111.2399s, deleted=112.2774s)
+
+### Stage 2 — IPA (no tones)
+- Overall CER: 118.33%
+  - Tier A: CER=127.28%  ref=1030 chars  hyp=1548 chars
+  - Tier B: CER=105.35%  ref=1084 chars  hyp=1320 chars
+  - Tier C: CER=169.47%  ref=95 chars  hyp=183 chars
+
+### Stage 3 — IPA with tones
+- Overall CER: 85.88%
+  - Tier A: CER=88.79%  ref=1838 chars  hyp=1992 chars
+  - Tier B: CER=80.82%  ref=1960 chars  hyp=1706 chars
+  - Tier C: CER=113.17%  ref=167 chars  hyp=233 chars

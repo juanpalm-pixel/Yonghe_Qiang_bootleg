@@ -1,0 +1,85 @@
+{
+  "stage1": {
+    "boundary_mae_s": 0.1288,
+    "speech_coverage_pct": 89.75,
+    "n_hyp_segments": 88,
+    "n_ref_segments": 193,
+    "ser": 1.0104,
+    "ster": 1.1581,
+    "total_ref_segments": 193,
+    "total_added_segments": 45,
+    "total_deleted_segments": 150,
+    "total_added_secs": 111.2399,
+    "total_deleted_secs": 112.2774,
+    "per_tier": {
+      "A": {
+        "n_ref": 81,
+        "n_hyp": 38,
+        "added_segs": 13,
+        "deleted_segs": 56,
+        "added_secs": 50.1211,
+        "deleted_secs": 43.1751
+      },
+      "B": {
+        "n_ref": 108,
+        "n_hyp": 42,
+        "added_segs": 24,
+        "deleted_segs": 90,
+        "added_secs": 51.9557,
+        "deleted_secs": 62.6453
+      },
+      "C": {
+        "n_ref": 4,
+        "n_hyp": 8,
+        "added_segs": 8,
+        "deleted_segs": 4,
+        "added_secs": 9.1631,
+        "deleted_secs": 6.457
+      }
+    }
+  },
+  "stage2": {
+    "per_tier": {
+      "A": {
+        "cer": 1.2728,
+        "ref_chars": 1030,
+        "hyp_chars": 1548
+      },
+      "B": {
+        "cer": 1.0535,
+        "ref_chars": 1084,
+        "hyp_chars": 1320
+      },
+      "C": {
+        "cer": 1.6947,
+        "ref_chars": 95,
+        "hyp_chars": 183
+      }
+    },
+    "overall_cer": 1.1833,
+    "ref_total_chars": 2209,
+    "hyp_total_chars": 3051
+  },
+  "stage3": {
+    "per_tier": {
+      "A": {
+        "cer": 0.8879,
+        "ref_chars": 1838,
+        "hyp_chars": 1992
+      },
+      "B": {
+        "cer": 0.8082,
+        "ref_chars": 1960,
+        "hyp_chars": 1706
+      },
+      "C": {
+        "cer": 1.1317,
+        "ref_chars": 167,
+        "hyp_chars": 233
+      }
+    },
+    "overall_cer": 0.8588,
+    "ref_total_chars": 3965,
+    "hyp_total_chars": 3931
+  }
+}

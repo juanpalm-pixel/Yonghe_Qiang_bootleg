@@ -141,7 +141,13 @@ def run_diarization(
 
     # Parse diarization result into list of segment dicts
     segments = []
-    for turn, _, speaker in diarization.itertracks(yield_label=True):
+    # pyannote Pipeline may return a DiarizeOutput (has .speaker_diarization)
+    if hasattr(diarization, "speaker_diarization"):
+        ann = diarization.speaker_diarization
+    else:
+        ann = diarization
+
+    for turn, _, speaker in ann.itertracks(yield_label=True):
         segments.append(
             {
                 "speaker": speaker,
