@@ -286,7 +286,7 @@ Cannot access gated repo for url https://huggingface.co/pyannote/speaker-diariza
 Access to model pyannote/speaker-diari…
 
 ---
-## [trial_stage1_rerun] 2026-03-06 13:58
+## [trial_5] 2026-03-06 13:58
 
 ### Summary
 ```
@@ -317,7 +317,7 @@ Stage1 coverage=?% boundary_mae=?s SER=0.0 StER=0.0s | Stage2 CER=128.47% | Stag
 - Stage 1 FAILED: 'DiarizeOutput' object has no attribute 'itertracks'
 
 ---
-## [trial_stage1_rerun_2] 2026-03-06 14:04
+## [trial_6] 2026-03-06 14:04
 
 ### Summary
 ```
