@@ -284,3 +284,34 @@ Stage1 coverage=?% boundary_mae=?s SER=0.0 StER=0.0s | Stage2 CER=128.47% | Stag
 
 Cannot access gated repo for url https://huggingface.co/pyannote/speaker-diarization-community-1/resolve/main/plda/xvec_transform.npz.
 Access to model pyannote/speaker-diari…
+
+---
+## [trial_stage1_rerun] 2026-03-06 13:58
+
+### Summary
+```
+Stage1 coverage=?% boundary_mae=?s SER=0.0 StER=0.0s | Stage2 CER=128.47% | Stage3 CER=90.49%
+```
+
+### Stage 1 — Diarization
+- Speech coverage: ? %
+- Boundary MAE: ? s
+- Hypothesis segments: ?
+- Reference segments: ?
+- SER: 0.0 (added=0, deleted=0)
+- StER: 0.0 s/seg (added=0.0s, deleted=0.0s)
+
+### Stage 2 — IPA (no tones)
+- Overall CER: 128.47%
+  - Tier A: CER=122.82%  ref=1030 chars  hyp=1503 chars
+  - Tier B: CER=136.44%  ref=1084 chars  hyp=1777 chars
+  - Tier C: CER=98.95%  ref=95 chars  hyp=3 chars
+
+### Stage 3 — IPA with tones
+- Overall CER: 90.49%
+  - Tier A: CER=86.34%  ref=1838 chars  hyp=1907 chars
+  - Tier B: CER=93.72%  ref=1960 chars  hyp=2249 chars
+  - Tier C: CER=98.20%  ref=167 chars  hyp=5 chars
+
+### Errors / Issues
+- Stage 1 FAILED: 'DiarizeOutput' object has no attribute 'itertracks'
